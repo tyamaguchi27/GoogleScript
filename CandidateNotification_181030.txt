@@ -1,0 +1,43 @@
+function myFunction() {
+  var spreadsheet = SpreadsheetApp.openById('1c4BL54BjGy1QlQYxfL6yzvn9raJI1_VmAgXCb0UOztM');//シートの取得
+  var sheet = spreadsheet.getSheetByName('進捗管理（全体）');//シート指定  
+  var data = sheet.getRange("j3:j1000").getValues();
+  var status = sheet.getRange("n3:n1000").getValues();
+  var counterpart = sheet.getRange("k3:k1000").getValues();
+  var names = sheet.getRange("e3:e1000").getValues();
+  var phonenumber = sheet.getRange("f3:f1000").getValues();
+//  Browser.msgBox(data);
+//  Logger.log(data)
+  var cur_arr = [];
+  for(var i = 0; i < data.length; i++){
+    if ((data[i] == 2  || data[i] == 4 || data[i] == 6 || data[i] == 8) && (status[i] == '1.挨拶メール済' || status[i] == '2-2ヒアリングTEL不通')){
+      cur_arr.push("\n" + counterpart[i] + " : " + names[i] + " , " +phonenumber[i]);
+    }
+  }
+  cur_arr.sort();
+  cur_arr.unshift("経過日が2,4,6,8日かつステータスが1.挨拶メール済または2-2ヒアリングTEL不通");
+  var text = cur_arr.toString();
+  slackPost();
+function slackPost(){
+    var url        = 'https://slack.com/api/chat.postMessage';
+    var token      = 'xoxp-251810327909-339029359537-368314437091-67d426d865acd13d1092842434535419';
+    var channel    = '読みカク';
+    var username   = '経過日';
+    var parse      = 'full';
+    var icon_emoji = ':telephone:';
+    var method     = 'post'; 
+    var payload = {
+      'token'      : token,
+      'channel'    : channel,
+      'text'       : text,
+      'username'   : username,
+      'parse'      : parse,
+      'icon_emoji' : icon_emoji
+    };
+    var params = {
+      'method' : method,
+      'payload' : payload
+    };
+    var response = UrlFetchApp.fetch(url, params);
+  }
+//  Browser.msgBox("aaaa");}
