@@ -1,0 +1,2 @@
+# GoogleScript
+業務用に作成したGoogleScriptを保存
